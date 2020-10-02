@@ -1,0 +1,21 @@
+server {
+    client_max_body_size 512m;
+    root /var/urepo;
+    index index.html;
+    server_name localhost;
+
+    location / {
+        autoindex on;
+    }
+
+    location ~ ^/cgi {
+        root /var/urepo/cgi;
+        rewrite ^/cgi/(.*) /$1 break;
+
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+        fastcgi_param SCRIPT_FILENAME /var/urepo/cgi$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+    }
+}
+
